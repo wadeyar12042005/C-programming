@@ -1,1 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
+#define MAX_ITEMS 100
+#define MAX_NAME_LENGTH 50
+#define MAX_ADDRESS_LENGTH 100
+
+// Structure to represent an item
+typedef struct {
+    char name[MAX_NAME_LENGTH];
+    float price;
+    int quantity;
+} Item;
+
+// Structure to represent customer details
+typedef struct {
+    char name[MAX_NAME_LENGTH];
+    char address[MAX_ADDRESS_LENGTH];
+} Customer;
+
+// Function to calculate total price
+float calculateTotal(Item items[], int numItems) {
+    float total = 0;
+    for (int i = 0; i < numItems; i++) {
+        total += items[i].price * items[i].quantity;
+    }
+    return total;
+}
+
+int main() {
+    Item items[MAX_ITEMS];
+    Customer customer;
+    int numItems = 0;
+    char choice;
+    
+    // Generate receipt number using time
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    int receiptNumber = (tm.tm_year + 1900) * 10000 + (tm.tm_mon + 1) * 100 + tm.tm_mday;
+
+    // Taking input of customer details
+    printf("Enter customer name: ");
+    scanf("%s", customer.name);
+    printf("Enter customer address: ");
+    scanf(" %[^\n]s", customer.address); // Read until newline character
+
+    // Taking input of items
+    do {
+        printf("Enter name of item: ");
+        scanf("%s", items[numItems].name);
+        printf("Enter price of item: ");
+        scanf("%f", &items[numItems].price);
+        printf("Enter quantity of item: ");
+        scanf("%d", &items[numItems].quantity);
+
+        numItems++;
+
+        printf("Do you want to add more items? (y/n): ");
+        scanf(" %c", &choice); // Note the space before %c to consume the newline character
+
+    } while (choice == 'y' && numItems < MAX_ITEMS);
+
+    // Printing bill and customer details
+    printf("\n\n**** Grocery Bill ****\n");
+    printf("Receipt Number: %d\n", receiptNumber);
+    printf("Date: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    printf("Customer Name: %s\n", customer.name);
+    printf("Customer Address: %s\n\n", customer.address);
+    printf("Item\t\tPrice\t\tQuantity\tTotal\n");
+    for (int i = 0; i < numItems; i++) {
+        printf("%s\t\t$%.2f\t\t%d\t\t$%.2f\n", items[i].name, items[i].price, items[i].quantity, items[i].price * items[i].quantity);
+    }
+
+    // Calculating and printing total
+    float total = calculateTotal(items, numItems);
+    printf("\nTotal Price: $%.2f\n", total);
+
+    return 0;
+}
